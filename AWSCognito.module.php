@@ -1,11 +1,13 @@
 <?php
 #---------------------------------------------------------------------------------------------------
 # Module: AWSCognito
-# Authors: Based on work by Homlee module
+# Authors: Magal Hezi, with CMS Made Simple Foundation.
+# Copyright: (C) 2025 Magal Hezi, h_magal@hotmail.com
 # Licence: GNU General Public License version 3. See http://www.gnu.org/licenses/  
 #---------------------------------------------------------------------------------------------------
 # CMS Made Simple(TM) is (c) CMS Made Simple Foundation 2004-2020 (info@cmsmadesimple.org)
 # Project's homepage is: http://www.cmsmadesimple.org
+# Module's homepage is: https://github.com/magalh/AWSCognito
 #---------------------------------------------------------------------------------------------------
 # This program is free software; you can redistribute it and/or modify it under the terms of the GNU
 # General Public License as published by the Free Software Foundation; either version 3 of the 
