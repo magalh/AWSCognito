@@ -17,10 +17,5 @@ $this->SetPreference('redirectUri', CMS_ROOT_URL . '/index.php?mact=AWSCognito,c
 $this->AddEventHandler('Core', 'LoginPre', false);
 $this->AddEventHandler('Core', 'LogoutPost', false);
 
-// Create .htaccess file for admin login redirect
-if ($this->GetPreference('enable_cognito', 0)) {
-    $this->UpdateAdminHtaccess(true);
-}
-
 // All done
 return true;

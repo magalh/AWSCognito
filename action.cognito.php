@@ -11,7 +11,7 @@ if ($this->GetPreference('enable_cognito', 0)) {
     $clientId = $settings['clientId'];
     $redirectUri = urlencode($settings['redirectUri']);
     $domain = $settings['domain'];
-    
+
     // Force redirect to Cognito
     header("Location: https://$domain/oauth2/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&scope=email+openid");
     exit;

@@ -50,6 +50,22 @@ switch($oldversion) {
         $this->RemovePreference('redirectUri');
         
         // No break here - all upgrades should cascade
+    case '1.0.7':
+        // Update .htaccess file to use THE_REQUEST for more reliable matching
+        if ($this->GetPreference('enable_cognito', 0)) {
+            $this->UpdateAdminHtaccess(true);
+        }
+        
+        // No break here - all upgrades should cascade
+    case '1.0.8':
+        // Improve .htaccess handling when disabling the module
+        if ($this->GetPreference('enable_cognito', 0)) {
+            $this->UpdateAdminHtaccess(true);
+        } else {
+            $this->UpdateAdminHtaccess(false);
+        }
+        
+        // No break here - all upgrades should cascade
 }
 
 // Always return true for successful upgrade

@@ -1,4 +1,4 @@
-# AWS Cognito Module for CMS Made Simple (v1.0.7)
+# AWS Cognito Module for CMS Made Simple (v1.0.9)
 
 This module integrates AWS Cognito authentication with CMS Made Simple admin login.
 

@@ -1,3 +1,15 @@
+Version 1.0.9 - June 2024
+-----------------------
+* Improved .htaccess handling when disabling the module
+* Enhanced rule removal to properly clean up the .htaccess file
+* Fixed potential issues with backup/restore of .htaccess file
+
+Version 1.0.8 - June 2024
+-----------------------
+* Updated .htaccess rules to use THE_REQUEST for more reliable matching
+* Changed to modify root .htaccess instead of admin/.htaccess
+* Improved login.php redirection reliability
+
 Version 1.0.7 - June 2024
 -----------------------
 * Changed redirectUri to be a fixed value instead of a configurable setting

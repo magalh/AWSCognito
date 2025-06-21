@@ -29,7 +29,7 @@ class AWSCognito extends CMSModule
 {
     const MANAGE_PERM = 'manage_AWSCognito';
     
-    public function GetVersion() { return '1.0.7'; }
+    public function GetVersion() { return '1.0.9'; }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetAdminDescription() { return $this->Lang('admindescription'); }
     public function IsPluginModule() { return TRUE; }
@@ -47,11 +47,6 @@ class AWSCognito extends CMSModule
         
         $this->SetParameterType('action', CLEAN_STRING);
         
-        // Register routes for Cognito integration
-        if ($this->GetPreference('enable_cognito', 0)) {
-            // Handle logout
-            $this->RegisterRoute('/admin/logout.php', ['action' => 'cognito_logout']);
-        }
     }
 
     public function InitializeAdmin() {
@@ -74,72 +69,15 @@ class AWSCognito extends CMSModule
         
         return $settings;
     }
-    
-    /**
-     * Hook to redirect admin login to Cognito and handle logout
-     */
-    public function DoEvent($originator, $eventname, &$params) {
-        // Only proceed if Cognito integration is enabled
-        if (!$this->GetPreference('enable_cognito', 0)) return;
-        
-        // Intercept before login processing
-        if ($originator == 'Core' && $eventname == 'LoginPre') {
-            $this->RedirectToCognitoLogin();
-        }
-        
-        // Intercept logout
-        if ($originator == 'Core' && $eventname == 'LogoutPost') {
-            $this->RedirectToCognitoLogout();
-        }
-    }
-    
-    /**
-     * Redirect to Cognito login
-     */
-    public function RedirectToCognitoLogin() {
-        $settings = $this->GetCognitoSettings();
-        
-        if (empty($settings['clientId']) || empty($settings['domain'])) {
-            return false;
-        }
-        
-        $redirectUri = urlencode($settings['redirectUri']);
-        
-        header("Location: https://{$settings['domain']}/oauth2/authorize?response_type=code&client_id={$settings['clientId']}&redirect_uri={$redirectUri}&scope=email+openid");
-        exit;
-    }
-    
-    /**
-     * Redirect to Cognito logout
-     */
-    public function RedirectToCognitoLogout() {
-        $settings = $this->GetCognitoSettings();
-        
-        if (empty($settings['clientId']) || empty($settings['domain'])) {
-            return false;
-        }
-        
-        // Clear session and cookies
-        if (isset($_SESSION[CMS_USER_KEY])) {
-            unset($_SESSION[CMS_USER_KEY]);
-        }
-        session_destroy();
-        setcookie("cognito_user_session", "", time() - 3600, "/admin", "", true, true);
-        
-        // Redirect to Cognito logout
-        $logoutUri = urlencode(CMS_ROOT_URL);
-        header("Location: https://{$settings['domain']}/logout?client_id={$settings['clientId']}&logout_uri={$logoutUri}");
-        exit;
-    }
-    
+
     /**
      * Create or update the .htaccess file in the admin directory
      * to redirect login.php to our Cognito action
      */
     public function UpdateAdminHtaccess($enable = true) {
         $config = \cms_utils::get_config();
-        $admin_dir = $config['root_path'] . '/admin';
-        $htaccess_file = $admin_dir . '/.htaccess';
+        $admin_dir = $config['root_path'] . '/' . $config['admin_dir'];
+        $htaccess_file = $config['root_path'] . '/.htaccess';
         
         // Backup existing .htaccess if it exists
         if (file_exists($htaccess_file) && !file_exists($htaccess_file . '.bak')) {
@@ -156,20 +94,20 @@ class AWSCognito extends CMSModule
             $htaccess_content .= "RewriteEngine On\n\n";
             
             // Redirect /admin/ to Cognito login if not authenticated
-            $htaccess_content .= "\tRewriteCond %{REQUEST_URI} ^/admin/?$\n";
+            $htaccess_content .= "\tRewriteCond %{REQUEST_URI} ^/".$config['admin_dir']."/?$\n";
             $htaccess_content .= "\tRewriteCond %{HTTP_COOKIE} !cognito_user_session=1\n";
             $htaccess_content .= "\tRewriteRule ^admin/?$ {$base_url}/index.php?mact={$module_name},cntnt01,cognito,0&showtemplate=false [R=302,L]\n\n";
             
-            // Redirect /admin/login.php to Cognito login
+            // Redirect /admin/login.php to Cognito login - using THE_REQUEST for more reliable matching
             $htaccess_content .= "\t# Redirect /admin/login.php to Cognito login if not already authenticated\n";
-            $htaccess_content .= "\tRewriteCond %{REQUEST_URI} ^/admin/login.php$\n";
-            $htaccess_content .= "\tRewriteRule ^admin/login.php$ {$base_url}/index.php?mact={$module_name},cntnt01,cognito,0&showtemplate=false [R=302,L]\n\n";
+            $htaccess_content .= "\tRewriteCond %{THE_REQUEST} ^[A-Z]{3,}\\s/".$config['admin_dir']."/login\\.php [NC]\n";
+            $htaccess_content .= "\tRewriteRule ^ {$base_url}/index.php?mact={$module_name},cntnt01,cognito,0&showtemplate=false [R=302,L]\n\n";
             
             // Redirect /admin/logout.php to Cognito logout
-            $htaccess_content .= "\t# Redirect /admin/logout.php to Cognito logout\n";
-            $htaccess_content .= "\tRewriteCond %{REQUEST_URI} ^/admin/logout.php$\n";
+            $htaccess_content .= "\t# Redirect /".$config['admin_dir']."/logout.php to Cognito logout\n";
+            $htaccess_content .= "\tRewriteCond %{REQUEST_URI} ^/".$config['admin_dir']."/logout.php$\n";
             $htaccess_content .= "\tRewriteCond %{QUERY_STRING} ^__c=([a-z0-9]+)$\n";
-            $htaccess_content .= "\tRewriteRule ^admin/logout.php$ {$base_url}/index.php?mact={$module_name},cntnt01,cognito_logout,0&cntnt01__c=%1&showtemplate=false [R=302,L]\n";
+            $htaccess_content .= "\tRewriteRule ^".$config['admin_dir']."/logout.php$ {$base_url}/index.php?mact={$module_name},cntnt01,cognito_logout,0&cntnt01__c=%1&showtemplate=false [R=302,L]\n";
             
             $htaccess_content .= "</IfModule>\n";
             
@@ -188,15 +126,15 @@ class AWSCognito extends CMSModule
                 file_put_contents($htaccess_file, $htaccess_content);
             }
         } else {
-            // Restore original .htaccess if backup exists
-            if (file_exists($htaccess_file . '.bak')) {
-                copy($htaccess_file . '.bak', $htaccess_file);
-                unlink($htaccess_file . '.bak');
-            } else if (file_exists($htaccess_file)) {
-                // Remove our rules from the file
+            // When disabling, always remove the rules from the current .htaccess file
+            if (file_exists($htaccess_file)) {
                 $content = file_get_contents($htaccess_file);
-                $content = preg_replace('/# AWSCognito module redirect.*?<\/IfModule>\n/s', '', $content);
-                file_put_contents($htaccess_file, $content);
+                // Check if our rules exist in the file
+                if (strpos($content, 'AWSCognito module redirect') !== false) {
+                    // Remove our rules from the file
+                    $content = preg_replace('/\n*# AWSCognito module redirect.*?<\/IfModule>\n*/s', "\n", $content);
+                    file_put_contents($htaccess_file, $content);
+                }
             }
         }
         
