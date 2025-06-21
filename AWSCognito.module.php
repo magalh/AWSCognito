@@ -31,7 +31,7 @@ class AWSCognito extends CMSModule
 {
     const MANAGE_PERM = 'manage_AWSCognito';
     
-    public function GetVersion() { return '1.0.9'; }
+    public function GetVersion() { return '1.2.1'; }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetAdminDescription() { return $this->Lang('admindescription'); }
     public function IsPluginModule() { return TRUE; }
@@ -49,6 +49,11 @@ class AWSCognito extends CMSModule
         
         $this->SetParameterType('action', CLEAN_STRING);
         
+        // Register direct route for login interception
+        if ($this->GetPreference('enable_cognito', 0)) {
+            $this->RegisterRoute('/admin/login.php', ['action' => 'login_intercept']);
+        }
+
     }
 
     public function InitializeAdmin() {
@@ -57,6 +62,45 @@ class AWSCognito extends CMSModule
     
     public function GetHelp() { return 'AWS Cognito integration module for CMS Made Simple.'; }
     public function GetChangeLog() { return @file_get_contents(__DIR__.'/doc/changelog.inc'); }
+    
+    /**
+     * Hook to redirect admin login to Cognito and handle logout
+     */
+    public function DoEvent($originator, $eventname, &$params) {
+        // Log all events for debugging
+        error_log("AWSCognito: Event triggered - $originator::$eventname");
+        
+        // Test LoginPre and LogoutPost events
+        if ($originator == 'Core' && $eventname == 'LoginPre') {
+            echo "<!-- AWSCognito: LoginPre event triggered -->";
+            error_log("AWSCognito: LoginPre event triggered with params: " . print_r($params, true));
+            
+            /*// If Cognito is enabled, try to redirect
+            if ($this->GetPreference('enable_cognito', 0)) {
+                $settings = $this->GetCognitoSettings();
+                if (!empty($settings['clientId']) && !empty($settings['domain'])) {
+                    error_log("AWSCognito: LoginPre - Attempting to redirect to Cognito");
+                    $redirectUri = urlencode($settings['redirectUri']);
+                    header("Location: https://{$settings['domain']}/oauth2/authorize?response_type=code&client_id={$settings['clientId']}&redirect_uri={$redirectUri}&scope=email+openid");
+                    exit;
+                } else {
+                    error_log("AWSCognito: LoginPre - Missing clientId or domain settings");
+                }
+            } else {
+                error_log("AWSCognito: LoginPre - Cognito integration not enabled");
+            }*/
+        }
+
+        if ($originator == 'Core' && $eventname == 'LoginPost') {
+            echo "<!-- AWSCognito: LoginPost event triggered -->";
+            error_log("AWSCognito: LoginPost event triggered");
+        }
+        
+        if ($originator == 'Core' && $eventname == 'LogoutPost') {
+            echo "<!-- AWSCognito: LogoutPost event triggered -->";
+            error_log("AWSCognito: LogoutPost event triggered");
+        }
+    }
     
     /**
      * Get the Cognito settings

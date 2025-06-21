@@ -13,9 +13,15 @@ $this->SetPreference('clientSecret', '');
 $this->SetPreference('domain', '');
 $this->SetPreference('redirectUri', CMS_ROOT_URL . '/index.php?mact=AWSCognito,cntnt01,cognito_callback,0&showtemplate=false');
 
-// Register events
-$this->AddEventHandler('Core', 'LoginPre', false);
-$this->AddEventHandler('Core', 'LogoutPost', false);
+// Create events if they don't exist
+\Events::CreateEvent('Core', 'LoginPre');
+\Events::CreateEvent('Core', 'LoginPost');
+\Events::CreateEvent('Core', 'LogoutPost');
+
+// Register event handlers
+$this->AddEventHandler('Core', 'LoginPre');
+$this->AddEventHandler('Core', 'LoginPost');
+$this->AddEventHandler('Core', 'LogoutPost');
 
 // All done
 return true;

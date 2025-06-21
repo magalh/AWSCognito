@@ -1,3 +1,31 @@
+Version 1.2.1 - June 2024
+-----------------------
+* Fixed event registration using the correct Events class
+* Ensured proper creation of LoginPre, LoginPost, and LogoutPost events
+
+Version 1.2.0 - June 2024
+-----------------------
+* Added proper event creation for LoginPre, LoginPost, and LogoutPost
+* Fixed issue with LoginPre event not appearing in Event Manager
+* Improved event registration during installation and upgrade
+
+Version 1.1.2 - June 2024
+-----------------------
+* Added direct route for login interception
+* Enhanced event logging for all events
+* Added direct redirection in LoginPre event handler
+* Created login_intercept action for direct interception
+
+Version 1.1.1 - June 2024
+-----------------------
+* Added LoginPost event handler for additional login interception
+* Updated DoEvent function to log LoginPost events
+
+Version 1.1.0 - June 2024
+-----------------------
+* Added simple event logging for testing LoginPre and LogoutPost events
+* Implemented basic DoEvent function for event handling
+
 Version 1.0.9 - June 2024
 -----------------------
 * Improved .htaccess handling when disabling the module

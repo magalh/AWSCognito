@@ -11,6 +11,7 @@ $this->RemovePreference();
 
 // Remove event handlers
 $this->RemoveEventHandler('Core', 'LoginPre');
+$this->RemoveEventHandler('Core', 'LoginPost');
 $this->RemoveEventHandler('Core', 'LogoutPost');
 
 // Restore original .htaccess file

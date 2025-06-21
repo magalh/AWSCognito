@@ -66,6 +66,44 @@ switch($oldversion) {
         }
         
         // No break here - all upgrades should cascade
+    case '1.0.9':
+        // Add simple event logging for testing
+        // No changes needed to event handlers as they're already registered
+        
+        // No break here - all upgrades should cascade
+    case '1.1.0':
+        // Add LoginPost event handler
+        $this->AddEventHandler('Core', 'LoginPost', false);
+        
+        // No break here - all upgrades should cascade
+    case '1.1.1':
+        // Add direct route for login interception
+        // No changes needed to event handlers
+        
+        // No break here - all upgrades should cascade
+    case '1.1.2':
+        // Create events if they don't exist
+        \Events::CreateEvent('Core', 'LoginPre');
+        \Events::CreateEvent('Core', 'LoginPost');
+        \Events::CreateEvent('Core', 'LogoutPost');
+
+        // Re-register event handlers
+        $this->RemoveEventHandler('Core', 'LoginPre');
+        $this->RemoveEventHandler('Core', 'LoginPost');
+        $this->RemoveEventHandler('Core', 'LogoutPost');
+        
+        $this->AddEventHandler('Core', 'LoginPre');
+        $this->AddEventHandler('Core', 'LoginPost');
+        $this->AddEventHandler('Core', 'LogoutPost');
+        
+        // No break here - all upgrades should cascade
+    case '1.2.0':
+        // Fix event registration using the correct Events class
+        $this->RemoveEventHandler('Core', 'LoginPre');
+        \Events::CreateEvent('Core', 'LoginPre');
+        $this->AddEventHandler('Core', 'LoginPre');
+        
+        // No break here - all upgrades should cascade
 }
 
 // Always return true for successful upgrade
