@@ -5,7 +5,7 @@ if (!$this->CheckPermission('Modify Site Preferences')) {
 
 // Remove permissions
 $this->RemovePermission(AWSCognito::MANAGE_PERM);
-
+$this->UpdateAdminLogin(false);
 // Remove preferences
 $this->RemovePreference();
 

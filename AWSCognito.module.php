@@ -40,18 +40,18 @@ class AWSCognito extends CMSModule
 
     }
     
-    public function GetVersion() { return '1.3.0'; }
+    public function GetVersion() { return '1.0.0'; }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetAdminDescription() { return $this->Lang('admindescription'); }
     public function IsPluginModule() { return TRUE; }
     public function HasAdmin() { return TRUE; }
     public function HandlesEvents()  { return TRUE; }
     public function VisibleToAdminUser() { return $this->CheckPermission(self::MANAGE_PERM); }
-    public function GetAuthor() { return 'Based on Homlee module'; }
-    public function GetAuthorEmail() { return ''; }
+    public function GetAuthor() { return 'Magal Hezi'; }
+	public function GetAuthorEmail() { return 'magal@pixelsolutions.biz'; }
     public function UninstallPreMessage() { return $this->Lang('ask_uninstall'); }
-    public function GetAdminSection() { return 'security'; }
-    public function MinimumCMSVersion() { return '2.2.20'; }
+    public function GetAdminSection() { return 'extensions'; }
+    public function MinimumCMSVersion() { return '2.2.10'; }
 
     public function InitializeFrontend() {
         $this->RegisterModulePlugin();

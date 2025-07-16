@@ -67,6 +67,10 @@
     <li>If you didn't find an answer to your question, you are warmly invited to open a new issue on the <a href="https://github.com/magalh/AWSCognito/issues" target="_blank">AWSCognito GitHub Issues Page</a>.</li>
 </ul>
 
+<p>Lastly, if you enjoy this module, use it on a commercial website or would like to encourage future development, you might consider just a small donation. Any kind of feedback will be much appreciated.<br>
+<a href="https://www.paypal.com/donate/?hosted_button_id=FWHABZUN3NC4N" target="_blank"><img src="https://raw.githubusercontent.com/aha999/DonateButtons/master/paypal-donate-icon-7.png" width="120" ></a><br>
+</p>
+
 <h3>Copyright and License</h3>
 <p>Copyright &copy; 2025, AWSCognito Module Developer. All Rights Are Reserved.</p>
 <p>This program is free software; you can redistribute it and/or modify
