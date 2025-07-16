@@ -40,7 +40,7 @@ $clientId = $settings['clientId'];
 $domain = $settings['domain'];
 $redirectUri = $settings['redirectUri'];
 
-$ch = curl_init("https://$domain/oauth2/token");
+$ch = curl_init("$domain/oauth2/token");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
     'grant_type' => 'authorization_code',
@@ -55,6 +55,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 ]);
 
 $response = json_decode(curl_exec($ch), true);
+
 $idToken = $response['id_token'];
 
 $payload = json_decode(base64_decode(explode('.', $idToken)[1]), true);
@@ -68,10 +69,13 @@ if (!$username) {
 
 $user = find_admin_user_by_username($username);
 if ($user) {
+    $config = \cms_utils::get_config();
+    $admin_dir = $config['admin_dir'];
+
     $login_ops = \CMSMS\LoginOperations::get_instance();
     $login_ops->save_authentication($user);
-    setcookie("cognito_user_session", 1, 0, "/admin", "", true, true);
-    header("Location: /admin/");
+    setcookie("cognito_user_session", 1, 0, "/".$admin_dir, "", true, true);
+    header("Location: /".$admin_dir."/");
     exit;
 } else {
     die("Access denied: no matching CMS user for username $username");

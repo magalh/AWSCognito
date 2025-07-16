@@ -1,3 +1,18 @@
+Version 1.3.0 - July 2025
+-----------------------
+* updated events to work with core
+
+Version 1.2.3 - June 2024
+-----------------------
+* Removed redundant event.Core.LoginPre.php file
+* Simplified event handling by consolidating code in DoEvent function
+
+Version 1.2.2 - June 2024
+-----------------------
+* Fixed LoginPre event handling to match CMS Made Simple's behavior
+* Added pre_login action for direct login form interception
+* Updated event.Core.LoginPre.php to handle post-authentication events
+
 Version 1.2.1 - June 2024
 -----------------------
 * Fixed event registration using the correct Events class

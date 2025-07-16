@@ -104,6 +104,15 @@ switch($oldversion) {
         $this->AddEventHandler('Core', 'LoginPre');
         
         // No break here - all upgrades should cascade
+    case '1.2.1':
+    case '1.2.2':
+        // Remove redundant event files
+        $file = $this->GetModulePath() . '/event.Core.LoginPre.php';
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+        
+        // No break here - all upgrades should cascade
 }
 
 // Always return true for successful upgrade

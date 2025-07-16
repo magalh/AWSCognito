@@ -6,6 +6,13 @@
         <p class="pagetext">{$mod->Lang('enable_cognito')}:</p>
         <p class="pageinput">
             <input type="checkbox" name="{$actionid}enable_cognito" value="1" {if $enable_cognito}checked="checked"{/if} />
+            
+                {if $login_hook_valid}
+                    <span style="color: green; margin-left: 10px;">✓ Login hook active</span>
+                {else}
+                    <span style="color: red; margin-left: 10px;">⚠ Login hook missing</span>
+                {/if}
+            
         </p>
     </div>
     

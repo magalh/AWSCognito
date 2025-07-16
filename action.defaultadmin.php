@@ -35,22 +35,30 @@ if (!$this->CheckPermission(AWSCognito::MANAGE_PERM)) {
 
 // Save settings if form was submitted
 if (isset($params['submit'])) {
-    $enable_cognito_old = $this->GetPreference('enable_cognito', 0);
-    $enable_cognito_new = isset($params['enable_cognito']) ? 1 : 0;
     
-    $this->SetPreference('enable_cognito', $enable_cognito_new);
-    $this->SetPreference('clientId', $params['clientId']);
-    $this->SetPreference('clientSecret', $params['clientSecret']);
-    $this->SetPreference('domain', $params['domain']);
+    $enable_cognito = isset($params['enable_cognito']) ? 1 : null;
     
-    $this->UpdateAdminHtaccess($enable_cognito_new);
+    if ($enable_cognito == 1 && (empty($params['clientId']) || empty($params['clientSecret']))) {
+
+        echo $this->ShowErrors($this->Lang('error_missing_credentials'));
+
+    } else {
+
+        $this->SetPreference('enable_cognito', $enable_cognito);
+        $this->SetPreference('clientId', $params['clientId']);
+        $this->SetPreference('clientSecret', $params['clientSecret']);
+        $this->SetPreference('domain', $params['domain']);
+        
+        //$this->UpdateAdminHtaccess($enable_cognito_new);
+        $this->UpdateAdminLogin($enable_cognito);
+        echo $this->ShowMessage($this->Lang('settings_saved'));
+    }
     
-    echo $this->ShowMessage($this->Lang('settings_saved'));
 }
 
 // Get current settings
 $settings = $this->GetCognitoSettings();
-$enable_cognito = $this->GetPreference('enable_cognito', 0);
+$enable_cognito = $this->GetPreference('enable_cognito', null);
 
 // Create the settings form
 $smarty->assign('startform', $this->CreateFormStart($id, 'defaultadmin', $returnid));
@@ -62,5 +70,6 @@ $smarty->assign('clientId', $settings['clientId']);
 $smarty->assign('clientSecret', $settings['clientSecret']);
 $smarty->assign('domain', $settings['domain']);
 $smarty->assign('redirectUri', $settings['redirectUri']);
+$smarty->assign('login_hook_valid', $this->ValidateAdminLogin());
 
 echo $this->ProcessTemplate('admin_settings.tpl');
