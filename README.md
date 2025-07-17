@@ -60,6 +60,9 @@
     <li>Monitor AWS CloudTrail logs for suspicious activity</li>
 </ul>
 
+<h3>Screenshots</h3>
+<p><img src="https://cmsms-downloads.s3.eu-south-1.amazonaws.com/AWSCognito/1.0.0/thumbnail.jpg" alt="AWSCognito CMSMS Module" width="900"></p>
+
 <h3>Feedback/Support</h3>
 <p>This module does not include commercial support. However, there are a number of resources available to help you with it:</p>
 <ul>
